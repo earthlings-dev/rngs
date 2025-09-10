@@ -18,6 +18,7 @@ use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use criterion_cycles_per_byte::CyclesPerByte;
 use rand_core::{RngCore, SeedableRng};
 
+use rand_chacha::{ChaCha8Rng, ChaCha12Rng, ChaCha20Rng};
 use rand_hc::Hc128Rng;
 use rand_isaac::{Isaac64Rng, IsaacRng};
 use rand_sfc::{Sfc32, Sfc64};
@@ -87,6 +88,9 @@ fn gen_bytes(c: &mut Criterion<CyclesPerByte>) {
     gen_bytes!("isaac64", Isaac64Rng::from_rng(&mut master));
     gen_bytes!("sfc32", Sfc32::from_rng(&mut master));
     gen_bytes!("sfc64", Sfc64::from_rng(&mut master));
+    gen_bytes!("chacha8", ChaCha8Rng::from_rng(&mut master));
+    gen_bytes!("chacha12", ChaCha12Rng::from_rng(&mut master));
+    gen_bytes!("chacha20", ChaCha20Rng::from_rng(&mut master));
 }
 
 // Save a dependency on Rand:
@@ -197,6 +201,9 @@ fn gen_uint(c: &mut Criterion<CyclesPerByte>) {
         gen_uint!(g, "isaac64", u32, Isaac64Rng::from_rng(&mut master));
         gen_uint!(g, "sfc32", u32, Sfc32::from_rng(&mut master));
         gen_uint!(g, "sfc64", u32, Sfc64::from_rng(&mut master));
+        gen_uint!(g, "chacha8", u32, ChaCha8Rng::from_rng(&mut master));
+        gen_uint!(g, "chacha12", u32, ChaCha12Rng::from_rng(&mut master));
+        gen_uint!(g, "chacha20", u32, ChaCha20Rng::from_rng(&mut master));
     }
 
     {
@@ -270,6 +277,9 @@ fn gen_uint(c: &mut Criterion<CyclesPerByte>) {
         gen_uint!(g, "isaac64", u64, Isaac64Rng::from_rng(&mut master));
         gen_uint!(g, "sfc32", u64, Sfc32::from_rng(&mut master));
         gen_uint!(g, "sfc64", u64, Sfc64::from_rng(&mut master));
+        gen_uint!(g, "chacha8", u64, ChaCha8Rng::from_rng(&mut master));
+        gen_uint!(g, "chacha12", u64, ChaCha12Rng::from_rng(&mut master));
+        gen_uint!(g, "chacha20", u64, ChaCha20Rng::from_rng(&mut master));
     }
 }
 
@@ -303,6 +313,9 @@ fn init(c: &mut Criterion) {
     init_gen!("isaac64", Isaac64Rng);
     init_gen!("sfc32", Sfc32);
     init_gen!("sfc64", Sfc64);
+    init_gen!("chacha8", ChaCha8Rng);
+    init_gen!("chacha12", ChaCha12Rng);
+    init_gen!("chacha20", ChaCha20Rng);
 }
 
 criterion_group! {
