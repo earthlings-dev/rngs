@@ -29,8 +29,8 @@
 #![deny(missing_debug_implementations)]
 #![no_std]
 
-use core::fmt;
 use core::num::Wrapping as w;
+use core::{convert::Infallible, fmt};
 use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -65,9 +65,10 @@ impl fmt::Debug for XorShiftRng {
     }
 }
 
-impl RngCore for XorShiftRng {
+impl TryRngCore for XorShiftRng {
+    type Error = Infallible;
     #[inline]
-    fn next_u32(&mut self) -> u32 {
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
         // These shifts are taken from the example in the Summary section of
         // the paper 'Xorshift RNGs'. (On the bottom of page 5.)
         let x = self.x;
@@ -77,17 +78,17 @@ impl RngCore for XorShiftRng {
         self.z = self.w;
         let w_ = self.w;
         self.w = w_ ^ (w_ >> 19) ^ (t ^ (t >> 8));
-        self.w.0
+        Ok(self.w.0)
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         utils::next_u64_via_u32(self)
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        utils::fill_bytes_via_next_word(dest, || self.next_u32())
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u32())
     }
 }
 

@@ -14,9 +14,9 @@
 
 //! The HC-128 random number generator.
 
-use core::fmt;
+use core::{convert::Infallible, fmt};
 use rand_core::block::{BlockRng, CryptoGenerator, Generator};
-use rand_core::{CryptoRng, RngCore, SeedableRng, utils};
+use rand_core::{SeedableRng, TryCryptoRng, TryRngCore, utils};
 
 const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 
@@ -50,7 +50,7 @@ const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 /// concatenated with a 128-bit IV from the stream cipher.
 ///
 /// This implementation uses an output buffer of sixteen `u32` words, and uses
-/// [`BlockRng`] to implement the [`RngCore`] methods.
+/// [`BlockRng`] to implement the [`TryRngCore`] methods.
 ///
 /// ## References
 /// [^1]: Hongjun Wu (2008). ["The Stream Cipher HC-128"](
@@ -72,20 +72,23 @@ const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 #[derive(Clone, Debug)]
 pub struct Hc128Rng(BlockRng<Hc128Core>);
 
-impl RngCore for Hc128Rng {
+impl TryRngCore for Hc128Rng {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
-        self.0.next_word()
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
+        Ok(self.0.next_word())
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
-        self.0.next_u64_from_u32()
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
+        Ok(self.0.next_u64_from_u32())
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        self.0.fill_bytes(dest)
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        self.0.fill_bytes(dest);
+        Ok(())
     }
 }
 
@@ -98,11 +101,11 @@ impl SeedableRng for Hc128Rng {
     }
 }
 
-impl CryptoRng for Hc128Rng {}
+impl TryCryptoRng for Hc128Rng {}
 
 impl PartialEq for Hc128Rng {
     fn eq(&self, rhs: &Self) -> bool {
-        self.0.core == rhs.0.core && self.0.index() == rhs.0.index()
+        self.0.core == rhs.0.core && self.0.word_offset() == rhs.0.word_offset()
     }
 }
 impl Eq for Hc128Rng {}

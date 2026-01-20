@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use rand_core::{RngCore, SeedableRng, utils};
+use core::convert::Infallible;
+use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -57,24 +58,26 @@ impl Xoroshiro128Plus {
     }
 }
 
-impl RngCore for Xoroshiro128Plus {
+impl TryRngCore for Xoroshiro128Plus {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
         // The two lowest bits have some linear dependencies, so we use the
         // upper bits instead.
-        (self.next_u64() >> 32) as u32
+        Ok((self.next_u64() >> 32) as u32)
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         let r = self.s0.wrapping_add(self.s1);
         impl_xoroshiro_u64!(self);
-        r
+        Ok(r)
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        utils::fill_bytes_via_next_word(dest, || self.next_u64());
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u64())
     }
 }
 impl SeedableRng for Xoroshiro128Plus {

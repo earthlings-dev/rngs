@@ -106,7 +106,8 @@ mod error;
 mod platform;
 
 pub use crate::error::TimerError;
-use rand_core::{RngCore, utils};
+use core::convert::Infallible;
+use rand_core::{RngCore, TryRngCore, utils};
 
 use core::{fmt, mem, ptr};
 #[cfg(feature = "std")]
@@ -733,33 +734,35 @@ fn black_box<T>(dummy: T) -> T {
     }
 }
 
-impl<F> RngCore for JitterRng<F>
+impl<F> TryRngCore for JitterRng<F>
 where
     F: Fn() -> u64 + Send + Sync,
 {
-    fn next_u32(&mut self) -> u32 {
+    type Error = Infallible;
+
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
         // We want to use both parts of the generated entropy
         if self.data_half_used {
             self.data_half_used = false;
-            (self.data >> 32) as u32
+            Ok((self.data >> 32) as u32)
         } else {
             self.data = self.next_u64();
             self.data_half_used = true;
-            self.data as u32
+            Ok(self.data as u32)
         }
     }
 
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         self.data_half_used = false;
-        self.gen_entropy()
+        Ok(self.gen_entropy())
     }
 
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
         // Fill using `next_u32`. This is faster for filling small slices (four
         // bytes or less), while the overhead is negligible.
         //
         // This is done especially for wrappers that implement `next_u32`
         // themselves via `fill_bytes`.
-        utils::fill_bytes_via_next_word(dest, || self.next_u64())
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u64())
     }
 }
