@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use rand_core::{RngCore, SeedableRng, utils};
+use core::convert::Infallible;
+use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -40,14 +41,16 @@ const LSHIFT: u32 = 3;
 // implemented here, though.
 const WEYL_INC: u64 = 1;
 
-impl RngCore for Sfc64 {
+impl TryRngCore for Sfc64 {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
-        (self.next_u64() >> 32) as u32
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
+        Ok((self.next_u64() >> 32) as u32)
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         let old_b = self.b;
         let old_c = self.c;
         let old_weyl = self.weyl;
@@ -57,12 +60,13 @@ impl RngCore for Sfc64 {
         self.b = old_c.wrapping_add(old_c << LSHIFT);
         self.c = result.wrapping_add(old_c.rotate_left(BARREL_SHIFT));
         self.weyl = self.weyl.wrapping_add(WEYL_INC);
-        result
+
+        Ok(result)
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        utils::fill_bytes_via_next_word(dest, || self.next_u64());
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u64())
     }
 }
 

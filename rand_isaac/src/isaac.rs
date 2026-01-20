@@ -10,7 +10,7 @@
 //! The ISAAC random number generator.
 
 use core::num::Wrapping as w;
-use core::{fmt, slice};
+use core::{convert::Infallible, fmt, slice};
 use rand_core::block::{BlockRng, Generator};
 use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
 #[cfg(feature = "serde")]
@@ -91,20 +91,23 @@ const RAND_SIZE: usize = 1 << RAND_SIZE_LEN;
 #[derive(Debug, Clone)]
 pub struct IsaacRng(BlockRng<IsaacCore>);
 
-impl RngCore for IsaacRng {
+impl TryRngCore for IsaacRng {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
-        self.0.next_word()
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
+        Ok(self.0.next_word())
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
-        self.0.next_u64_from_u32()
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
+        Ok(self.0.next_u64_from_u32())
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        self.0.fill_bytes(dest)
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        self.0.fill_bytes(dest);
+        Ok(())
     }
 }
 

@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use rand_core::{RngCore, SeedableRng, utils};
+use core::convert::Infallible;
+use rand_core::{SeedableRng, TryRngCore, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -28,9 +29,11 @@ pub struct SplitMix64 {
 
 const PHI: u64 = 0x9e3779b97f4a7c15;
 
-impl RngCore for SplitMix64 {
+impl TryRngCore for SplitMix64 {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
         self.x = self.x.wrapping_add(PHI);
         let mut z = self.x;
         // David Stafford's
@@ -39,21 +42,21 @@ impl RngCore for SplitMix64 {
         // MurmurHash3 algorithm.
         z = (z ^ (z >> 33)).wrapping_mul(0x62A9D9ED799705F5);
         z = (z ^ (z >> 28)).wrapping_mul(0xCB24D0A5C88C35B3);
-        (z >> 32) as u32
+        Ok((z >> 32) as u32)
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         self.x = self.x.wrapping_add(PHI);
         let mut z = self.x;
         z = (z ^ (z >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
         z = (z ^ (z >> 27)).wrapping_mul(0x94d049bb133111eb);
-        z ^ (z >> 31)
+        Ok(z ^ (z >> 31))
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        utils::fill_bytes_via_next_word(dest, || self.next_u64());
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u64())
     }
 }
 
@@ -75,6 +78,7 @@ impl SeedableRng for SplitMix64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand_core::RngCore;
 
     #[test]
     fn reference() {

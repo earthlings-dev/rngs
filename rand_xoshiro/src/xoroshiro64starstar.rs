@@ -6,7 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use rand_core::{RngCore, SeedableRng, utils};
+use core::convert::Infallible;
+use rand_core::{SeedableRng, TryRngCore, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -26,22 +27,24 @@ pub struct Xoroshiro64StarStar {
     s1: u32,
 }
 
-impl RngCore for Xoroshiro64StarStar {
+impl TryRngCore for Xoroshiro64StarStar {
+    type Error = Infallible;
+
     #[inline]
-    fn next_u32(&mut self) -> u32 {
+    fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
         let r = starstar_u32!(self.s0);
         impl_xoroshiro_u32!(self);
-        r
+        Ok(r)
     }
 
     #[inline]
-    fn next_u64(&mut self) -> u64 {
+    fn try_next_u64(&mut self) -> Result<u64, Self::Error> {
         utils::next_u64_via_u32(self)
     }
 
     #[inline]
-    fn fill_bytes(&mut self, dest: &mut [u8]) {
-        utils::fill_bytes_via_next_word(dest, || self.next_u32());
+    fn try_fill_bytes(&mut self, dest: &mut [u8]) -> Result<(), Self::Error> {
+        utils::fill_bytes_via_next_word(dest, || self.try_next_u32())
     }
 }
 
@@ -66,6 +69,7 @@ impl SeedableRng for Xoroshiro64StarStar {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand_core::RngCore;
 
     #[test]
     fn reference() {
