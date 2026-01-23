@@ -591,7 +591,7 @@ mod test {
         use rand_core::CryptoRng;
 
         let mut rng1 = ChaChaRng::from_seed(Default::default());
-        let mut rng2 = &mut rng1.clone() as &mut dyn CryptoRng;
+        let rng2 = &mut rng1.clone() as &mut dyn CryptoRng;
         for _ in 0..1000 {
             assert_eq!(rng1.next_u64(), rng2.next_u64());
         }
