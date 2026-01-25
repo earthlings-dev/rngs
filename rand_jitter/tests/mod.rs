@@ -3,7 +3,7 @@ use rand_jitter::JitterRng;
 #[cfg(all(feature = "std", not(target_arch = "wasm32")))]
 #[test]
 fn test_jitter_init() {
-    use rand_core::RngCore;
+    use rand_core::Rng;
 
     // Because this is a debug build, measurements here are not representative
     // of the final release build.

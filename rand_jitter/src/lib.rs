@@ -107,7 +107,7 @@ mod platform;
 
 pub use crate::error::TimerError;
 use core::convert::Infallible;
-use rand_core::{RngCore, TryRngCore, utils};
+use rand_core::{Rng, TryRng, utils};
 
 use core::{fmt, mem, ptr};
 #[cfg(feature = "std")]
@@ -734,7 +734,7 @@ fn black_box<T>(dummy: T) -> T {
     }
 }
 
-impl<F> TryRngCore for JitterRng<F>
+impl<F> TryRng for JitterRng<F>
 where
     F: Fn() -> u64 + Send + Sync,
 {
