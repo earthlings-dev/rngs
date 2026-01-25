@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use core::convert::Infallible;
-use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
+use rand_core::{Rng, SeedableRng, TryRng, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -103,7 +103,7 @@ impl SeedableRng for Xoshiro512Plus {
     }
 }
 
-impl TryRngCore for Xoshiro512Plus {
+impl TryRng for Xoshiro512Plus {
     type Error = Infallible;
 
     #[inline]

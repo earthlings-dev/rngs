@@ -1,6 +1,6 @@
 #![cfg(feature = "serde")]
 
-use rand_core::{RngCore, SeedableRng};
+use rand_core::{Rng, SeedableRng};
 use rand_xoshiro::{
     SplitMix64, Xoroshiro64Star, Xoroshiro64StarStar, Xoroshiro128Plus, Xoroshiro128StarStar,
     Xoshiro128Plus, Xoshiro128StarStar, Xoshiro256Plus, Xoshiro256StarStar, Xoshiro512Plus,

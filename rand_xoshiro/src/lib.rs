@@ -69,7 +69,7 @@
 //! To initialize a generator, use the [`SeedableRng`][rand_core::SeedableRng] trait:
 //!
 //! ```
-//! use rand_core::{SeedableRng, RngCore};
+//! use rand_core::{SeedableRng, Rng};
 //! use rand_xoshiro::Xoshiro256PlusPlus;
 //!
 //! let mut rng = Xoshiro256PlusPlus::seed_from_u64(0);
