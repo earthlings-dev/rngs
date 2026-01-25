@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use core::convert::Infallible;
-use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
+use rand_core::{Rng, SeedableRng, TryRng, utils};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -38,7 +38,7 @@ const LSHIFT: u32 = 3;
 // implemented here, though.
 const WEYL_INC: u32 = 1;
 
-impl TryRngCore for Sfc32 {
+impl TryRng for Sfc32 {
     type Error = Infallible;
 
     #[inline]
