@@ -16,7 +16,7 @@
 
 use core::{convert::Infallible, fmt};
 use rand_core::block::{BlockRng, CryptoGenerator, Generator};
-use rand_core::{SeedableRng, TryCryptoRng, TryRngCore, utils};
+use rand_core::{SeedableRng, TryCryptoRng, TryRng, utils};
 
 const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 
@@ -50,7 +50,7 @@ const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 /// concatenated with a 128-bit IV from the stream cipher.
 ///
 /// This implementation uses an output buffer of sixteen `u32` words, and uses
-/// [`BlockRng`] to implement the [`TryRngCore`] methods.
+/// [`BlockRng`] to implement the [`TryRng`] methods.
 ///
 /// ## References
 /// [^1]: Hongjun Wu (2008). ["The Stream Cipher HC-128"](
@@ -72,7 +72,7 @@ const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
 #[derive(Clone, Debug)]
 pub struct Hc128Rng(BlockRng<Hc128Core>);
 
-impl TryRngCore for Hc128Rng {
+impl TryRng for Hc128Rng {
     type Error = Infallible;
 
     #[inline]
@@ -355,7 +355,7 @@ impl Eq for Hc128Core {}
 #[cfg(test)]
 mod test {
     use super::Hc128Rng;
-    use ::rand_core::{RngCore, SeedableRng};
+    use ::rand_core::{Rng, SeedableRng};
 
     #[test]
     // Test vector 1 from the paper "The Stream Cipher HC-128"
