@@ -12,7 +12,7 @@
 use core::num::Wrapping as w;
 use core::{convert::Infallible, fmt, slice};
 use rand_core::block::{BlockRng, Generator};
-use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
+use rand_core::{Rng, SeedableRng, TryRng, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -75,7 +75,7 @@ const RAND_SIZE: usize = 1 << RAND_SIZE_LEN;
 /// ISAAC therefore needs a lot of memory, relative to other non-crypto RNGs.
 /// 2 * 256 * 4 = 2 kb to hold the state and results.
 ///
-/// This implementation uses [`BlockRng`] to implement the [`RngCore`] methods.
+/// This implementation uses [`BlockRng`] to implement the [`Rng`] methods.
 ///
 /// ## References
 /// [^1]: Bob Jenkins, [*ISAAC: A fast cryptographic random number generator*](
@@ -91,7 +91,7 @@ const RAND_SIZE: usize = 1 << RAND_SIZE_LEN;
 #[derive(Debug, Clone)]
 pub struct IsaacRng(BlockRng<IsaacCore>);
 
-impl TryRngCore for IsaacRng {
+impl TryRng for IsaacRng {
     type Error = Infallible;
 
     #[inline]
@@ -130,7 +130,7 @@ impl SeedableRng for IsaacRng {
     #[inline]
     fn from_rng<R>(rng: &mut R) -> Self
     where
-        R: RngCore + ?Sized,
+        R: Rng + ?Sized,
     {
         IsaacRng(BlockRng::new(IsaacCore::from_rng(rng)))
     }
@@ -138,7 +138,7 @@ impl SeedableRng for IsaacRng {
     #[inline]
     fn try_from_rng<S>(rng: &mut S) -> Result<Self, S::Error>
     where
-        S: TryRngCore + ?Sized,
+        S: TryRng + ?Sized,
     {
         IsaacCore::try_from_rng(rng).map(|core| IsaacRng(BlockRng::new(core)))
     }
@@ -495,7 +495,7 @@ impl SeedableRng for IsaacCore {
 
     fn from_rng<R>(rng: &mut R) -> Self
     where
-        R: RngCore + ?Sized,
+        R: Rng + ?Sized,
     {
         // Custom `from_rng` implementation that fills a seed with the same size
         // as the entire state.
@@ -515,7 +515,7 @@ impl SeedableRng for IsaacCore {
 
     fn try_from_rng<R>(rng: &mut R) -> Result<Self, R::Error>
     where
-        R: TryRngCore + ?Sized,
+        R: TryRng + ?Sized,
     {
         // Custom `from_rng` implementation that fills a seed with the same size
         // as the entire state.
@@ -537,7 +537,7 @@ impl SeedableRng for IsaacCore {
 #[cfg(test)]
 mod test {
     use super::IsaacRng;
-    use rand_core::{RngCore, SeedableRng};
+    use rand_core::{Rng, SeedableRng};
 
     #[test]
     fn test_isaac_construction() {
