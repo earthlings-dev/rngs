@@ -16,7 +16,7 @@ use test::black_box;
 
 use criterion::{Criterion, Throughput, criterion_group, criterion_main};
 use criterion_cycles_per_byte::CyclesPerByte;
-use rand_core::{RngCore, SeedableRng};
+use rand_core::{Rng, SeedableRng};
 
 use rand_chacha::{ChaCha8Rng, ChaCha12Rng, ChaCha20Rng};
 use rand_hc::Hc128Rng;
@@ -95,19 +95,19 @@ fn gen_bytes(c: &mut Criterion<CyclesPerByte>) {
 
 // Save a dependency on Rand:
 trait Generate {
-    fn generate<R: RngCore>(rng: &mut R) -> Self;
+    fn generate<R: Rng>(rng: &mut R) -> Self;
 }
 
 impl Generate for u32 {
     #[inline]
-    fn generate<R: RngCore>(rng: &mut R) -> Self {
+    fn generate<R: Rng>(rng: &mut R) -> Self {
         rng.next_u32()
     }
 }
 
 impl Generate for u64 {
     #[inline]
-    fn generate<R: RngCore>(rng: &mut R) -> Self {
+    fn generate<R: Rng>(rng: &mut R) -> Self {
         rng.next_u64()
     }
 }
