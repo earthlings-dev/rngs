@@ -7,7 +7,7 @@
 // except according to those terms.
 
 use core::convert::Infallible;
-use rand_core::{SeedableRng, TryRngCore, utils};
+use rand_core::{SeedableRng, TryRng, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -29,7 +29,7 @@ pub struct SplitMix64 {
 
 const PHI: u64 = 0x9e3779b97f4a7c15;
 
-impl TryRngCore for SplitMix64 {
+impl TryRng for SplitMix64 {
     type Error = Infallible;
 
     #[inline]
@@ -78,7 +78,7 @@ impl SeedableRng for SplitMix64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand_core::RngCore;
+    use rand_core::Rng;
 
     #[test]
     fn reference() {

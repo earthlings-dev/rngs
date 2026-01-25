@@ -12,7 +12,7 @@ use crate::guts::ChaCha;
 use core::convert::Infallible;
 use core::fmt;
 use rand_core::block::{BlockRng, CryptoGenerator, Generator};
-use rand_core::{SeedableRng, TryCryptoRng, TryRngCore};
+use rand_core::{SeedableRng, TryCryptoRng, TryRng};
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -90,7 +90,7 @@ macro_rules! chacha_impl {
         /// ```
         ///
         /// This implementation uses an output buffer of sixteen `u32` words, and uses
-        /// [`BlockRng`] to implement the [`TryRngCore`] methods.
+        /// [`BlockRng`] to implement the [`TryRng`] methods.
         ///
         /// [^1]: D. J. Bernstein, [*ChaCha, a variant of Salsa20*](
         ///       https://cr.yp.to/chacha.html)
@@ -114,7 +114,7 @@ macro_rules! chacha_impl {
             }
         }
 
-        impl TryRngCore for $ChaChaXRng {
+        impl TryRng for $ChaChaXRng {
             type Error = Infallible;
 
             #[inline]
@@ -304,7 +304,7 @@ chacha_impl!(
 mod test {
     #[cfg(feature = "serde")]
     use super::{ChaCha8Rng, ChaCha12Rng, ChaCha20Rng};
-    use rand_core::{RngCore, SeedableRng};
+    use rand_core::{Rng, SeedableRng};
 
     type ChaChaRng = super::ChaCha20Rng;
 

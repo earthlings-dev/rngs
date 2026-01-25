@@ -12,7 +12,7 @@
 use core::num::Wrapping as w;
 use core::{convert::Infallible, fmt, slice};
 use rand_core::block::{BlockRng, Generator};
-use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
+use rand_core::{Rng, SeedableRng, TryRng, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -69,7 +69,7 @@ const RAND_SIZE: usize = 1 << RAND_SIZE_LEN;
 /// }
 /// ```
 ///
-/// This implementation uses [`BlockRng`] to implement the [`RngCore`] methods.
+/// This implementation uses [`BlockRng`] to implement the [`Rng`] methods.
 ///
 /// See for more information the documentation of [`IsaacRng`].
 ///
@@ -82,7 +82,7 @@ const RAND_SIZE: usize = 1 << RAND_SIZE_LEN;
 #[derive(Debug, Clone)]
 pub struct Isaac64Rng(BlockRng<Isaac64Core>);
 
-impl TryRngCore for Isaac64Rng {
+impl TryRng for Isaac64Rng {
     type Error = Infallible;
 
     #[inline]
@@ -121,7 +121,7 @@ impl SeedableRng for Isaac64Rng {
     #[inline]
     fn from_rng<R>(rng: &mut R) -> Self
     where
-        R: RngCore + ?Sized,
+        R: Rng + ?Sized,
     {
         Isaac64Rng(BlockRng::new(Isaac64Core::from_rng(rng)))
     }
@@ -129,7 +129,7 @@ impl SeedableRng for Isaac64Rng {
     #[inline]
     fn try_from_rng<S>(rng: &mut S) -> Result<Self, S::Error>
     where
-        S: TryRngCore + ?Sized,
+        S: TryRng + ?Sized,
     {
         Isaac64Core::try_from_rng(rng).map(|core| Isaac64Rng(BlockRng::new(core)))
     }
@@ -457,7 +457,7 @@ impl SeedableRng for Isaac64Core {
 
     fn from_rng<R>(rng: &mut R) -> Self
     where
-        R: RngCore + ?Sized,
+        R: Rng + ?Sized,
     {
         // Custom `from_rng` implementation that fills a seed with the same size
         // as the entire state.
@@ -476,7 +476,7 @@ impl SeedableRng for Isaac64Core {
 
     fn try_from_rng<R>(rng: &mut R) -> Result<Self, R::Error>
     where
-        R: TryRngCore + ?Sized,
+        R: TryRng + ?Sized,
     {
         // Custom `from_rng` implementation that fills a seed with the same size
         // as the entire state.
@@ -497,7 +497,7 @@ impl SeedableRng for Isaac64Core {
 #[cfg(test)]
 mod test {
     use super::Isaac64Rng;
-    use rand_core::{RngCore, SeedableRng};
+    use rand_core::{Rng, SeedableRng};
 
     #[test]
     fn test_isaac64_construction() {

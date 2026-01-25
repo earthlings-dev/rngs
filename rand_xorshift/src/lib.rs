@@ -13,7 +13,7 @@
 //! To initialize a generator, use the [`SeedableRng`] trait:
 //!
 //! ```
-//! use rand_core::{SeedableRng, RngCore};
+//! use rand_core::{SeedableRng, Rng};
 //! use rand_xorshift::XorShiftRng;
 //!
 //! let mut rng = XorShiftRng::seed_from_u64(0);
@@ -31,7 +31,7 @@
 
 use core::num::Wrapping as w;
 use core::{convert::Infallible, fmt};
-use rand_core::{RngCore, SeedableRng, TryRngCore, utils};
+use rand_core::{Rng, SeedableRng, TryRng, utils};
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -65,7 +65,7 @@ impl fmt::Debug for XorShiftRng {
     }
 }
 
-impl TryRngCore for XorShiftRng {
+impl TryRng for XorShiftRng {
     type Error = Infallible;
     #[inline]
     fn try_next_u32(&mut self) -> Result<u32, Self::Error> {
@@ -115,7 +115,7 @@ impl SeedableRng for XorShiftRng {
 
     fn from_rng<R>(rng: &mut R) -> Self
     where
-        R: RngCore + ?Sized,
+        R: Rng + ?Sized,
     {
         let mut b = [0u8; 16];
         loop {
@@ -135,7 +135,7 @@ impl SeedableRng for XorShiftRng {
 
     fn try_from_rng<R>(rng: &mut R) -> Result<Self, R::Error>
     where
-        R: TryRngCore + ?Sized,
+        R: TryRng + ?Sized,
     {
         let mut b = [0u8; 16];
         loop {
