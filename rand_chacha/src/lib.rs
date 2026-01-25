@@ -15,7 +15,7 @@
 //!
 //! This crate provides 8-, 12- and 20-round variants of generators via a "core"
 //! implementation (of [`block::Generator`]), each with an associated "RNG" type
-//! (implementing [`RngCore`]).
+//! (implementing [`Rng`]).
 //!
 //! These generators are all deterministic and portable (see [Reproducibility]
 //! in the book), with testing against reference vectors.
@@ -54,10 +54,10 @@
 //!
 //! ## Generation
 //!
-//! Generators implement [`RngCore`], whose methods may be used directly to
+//! Generators implement [`Rng`], whose methods may be used directly to
 //! generate unbounded integer or byte values.
 //! ```
-//! use rand_core::{SeedableRng, RngCore};
+//! use rand_core::{SeedableRng, Rng};
 //! use rand_chacha::ChaCha12Rng;
 //!
 //! let mut rng = ChaCha12Rng::from_seed(Default::default());
@@ -74,7 +74,7 @@
 //! [Security]: https://rust-random.github.io/book/guide-rngs.html#security
 //! [Random Values]: https://rust-random.github.io/book/guide-values.html
 //! [`block::Generator`]: rand_core::block::Generator
-//! [`RngCore`]: rand_core::RngCore
+//! [`Rng`]: rand_core::Rng
 //! [`SeedableRng`]: rand_core::SeedableRng
 //! [`SysRng`]: https://docs.rs/rand/latest/rand/rngs/struct.SysRng.html
 //! [`rand::rng`]: https://docs.rs/rand/latest/rand/fn.rng.html
