@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.10.0] - 2026-02-01
+The crate was moved from the rand repo (#1658) to the rngs repo (#92).
+
 ### Changed
 - Bump MSRV to 1.85 and edition to 2024 (#1671)
+- Update to `rand_core` v0.10 (#1712, #96)
 - Remove feature `os_rng` (#1674)
 
 ## [0.9.0] - 2025-01-27
