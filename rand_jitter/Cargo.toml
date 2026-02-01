@@ -1,6 +1,6 @@
 [package]
 name = "rand_jitter"
-version = "0.6.0-rc.0"
+version = "0.6.0"
 authors = ["The Rand Project Developers"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
@@ -19,7 +19,7 @@ std = []
 log = ["dep:log"]
 
 [dependencies]
-rand_core = "0.10.0-rc-6"
+rand_core = "0.10.0"
 log = { version = "0.4.4", optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]

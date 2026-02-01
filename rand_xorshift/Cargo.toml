@@ -1,6 +1,6 @@
 [package]
 name = "rand_xorshift"
-version = "0.5.0-rc.0"
+version = "0.5.0"
 authors = ["The Rand Project Developers", "The Rust Project Developers"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
@@ -22,7 +22,7 @@ all-features = true
 serde = ["dep:serde"]
 
 [dependencies]
-rand_core = "0.10.0-rc-6"
+rand_core = "0.10.0"
 serde = { version = "1.0.118", default-features = false, features = ["derive"], optional = true }
 
 [dev-dependencies]
