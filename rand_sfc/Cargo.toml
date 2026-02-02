@@ -1,6 +1,6 @@
 [package]
 name = "rand_sfc"
-version = "0.2.0-rc.0"
+version = "0.2.0"
 authors = ["The Rand Project Developers"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/rust-random/rngs"
@@ -19,5 +19,5 @@ all-features = true
 serde = ["dep:serde"]
 
 [dependencies]
-rand_core = "0.10.0-rc-6"
+rand_core = "0.10.0"
 serde = { version = "1.0.118", default-features = false, features = ["derive"], optional = true }

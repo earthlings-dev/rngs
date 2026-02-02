@@ -15,7 +15,7 @@
 //! The HC-128 random number generator.
 
 use core::{convert::Infallible, fmt};
-use rand_core::block::{BlockRng, CryptoGenerator, Generator};
+use rand_core::block::{BlockRng, Generator};
 use rand_core::{SeedableRng, TryCryptoRng, TryRng, utils};
 
 const SEED_WORDS: usize = 8; // 128 bit key followed by 128 bit iv
@@ -341,8 +341,6 @@ impl SeedableRng for Hc128Core {
         Self::init(utils::read_words(&seed))
     }
 }
-
-impl CryptoGenerator for Hc128Core {}
 
 // Custom PartialEq implementation as it can't currently be derived from an array of size 1024
 impl PartialEq for Hc128Core {
