@@ -128,7 +128,7 @@ impl Generator for Hc128Core {
     type Output = [u32; 16];
 
     fn generate(&mut self, results: &mut Self::Output) {
-        assert!(self.counter1024 % 16 == 0);
+        assert!(self.counter1024.is_multiple_of(16));
 
         let cc = self.counter1024 % 512;
         let dd = (cc + 16) % 512;
@@ -219,7 +219,7 @@ impl Hc128Core {
     }
 
     fn sixteen_steps(&mut self) {
-        assert!(self.counter1024 % 16 == 0);
+        assert!(self.counter1024.is_multiple_of(16));
 
         let cc = self.counter1024 % 512;
         let dd = (cc + 16) % 512;

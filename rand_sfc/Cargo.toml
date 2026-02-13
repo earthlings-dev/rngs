@@ -9,8 +9,8 @@ homepage = "https://rust-random.github.io/book"
 description = "Sfc32 and Sfc64 random number generators"
 keywords = ["random", "rng"]
 categories = ["algorithms", "no-std"]
-edition = "2024"
-rust-version = "1.85"
+edition.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -19,5 +19,5 @@ all-features = true
 serde = ["dep:serde"]
 
 [dependencies]
-rand_core = "0.10.0"
-serde = { version = "1.0.118", default-features = false, features = ["derive"], optional = true }
+rand_core = { workspace = true }
+serde = { workspace = true, features = ["derive"], optional = true }

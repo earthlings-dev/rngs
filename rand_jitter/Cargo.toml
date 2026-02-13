@@ -8,8 +8,8 @@ repository = "https://github.com/rust-random/rngs"
 documentation = "https://docs.rs/rand_jitter"
 description = "Random number generator based on timing jitter"
 keywords = ["random", "rng", "os"]
-edition = "2024"
-rust-version = "1.85"
+edition.workspace = true
+rust-version.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -19,13 +19,13 @@ std = []
 log = ["dep:log"]
 
 [dependencies]
-rand_core = "0.10.0"
-log = { version = "0.4.4", optional = true }
+rand_core = { workspace = true }
+log = { workspace = true, optional = true }
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 # We don't need the 'use_std' feature and depending on it causes
 # issues due to: https://github.com/rust-lang/cargo/issues/1197
-libc = { version = "0.2", default-features = false }
+libc = { workspace = true }
 
 [target.'cfg(target_os = "windows")'.dependencies]
-winapi = { version = "0.3", features = ["profileapi"] }
+winapi = { workspace = true, features = ["profileapi"] }
